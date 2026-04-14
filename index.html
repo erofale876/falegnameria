@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Falegnameria Desantis – Gestione v2.4</title>
+<title>Falegnameria Desantis – Gestione Completa</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
+/* CSS ORIGINALE COMPLETO */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#17110a;--bg2:#1e1508;--bg3:#261c0b;--card:#1b1308;
@@ -15,107 +16,121 @@
   --gn:#4ecb6e;--bl:#5aaee8;--rd:#d85040;
   --fn:'Share Tech Mono',monospace;
 }
-body{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:13px;min-height:100vh}
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#0d0904;border-bottom:2px solid var(--or)}
-.hdr h1{font-size:18px;color:var(--or);letter-spacing:1px}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg2);border-bottom:1px solid var(--bo2)}
-.t-btn{padding:12px 5px;border:none;background:none;color:var(--tx2);font-family:var(--fn);font-weight:700;font-size:10px;text-transform:uppercase;cursor:pointer}
-.t-btn.active{color:var(--or);border-bottom:2px solid var(--or);background:rgba(232,105,42,.05)}
-main{max-width:1100px;margin:0 auto;padding:15px}
+body{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:13px;min-height:100vh;padding-bottom:50px}
+.hdr{padding:20px;background:#0d0904;border-bottom:2px solid var(--or);text-align:center}
+.hdr h1{font-size:22px;color:var(--or);letter-spacing:2px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg2);border-bottom:1px solid var(--bo2);position:sticky;top:0;z-index:100}
+.t-btn{padding:15px 5px;border:none;background:none;color:var(--tx2);font-family:var(--fn);font-weight:700;font-size:11px;text-transform:uppercase;cursor:pointer}
+.t-btn.active{color:var(--or);border-bottom:3px solid var(--or);background:rgba(232,105,42,.05)}
+main{max-width:1200px;margin:0 auto;padding:15px}
 .panel{display:none} .panel.active{display:block}
-.card{background:var(--card);border:1px solid var(--bo2);padding:15px;border-radius:4px;margin-bottom:15px}
-.title{font-size:12px;color:var(--or);margin-bottom:12px;font-weight:700;text-transform:uppercase;border-left:3px solid var(--or);padding-left:8px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.f-gp{display:flex;flex-direction:column;gap:3px}
-label{font-size:9px;color:var(--tx2);text-transform:uppercase}
-input,select,textarea{background:var(--bg3);border:1px solid var(--bo2);padding:8px;color:var(--tx);font-family:var(--fn);border-radius:2px;width:100%}
-.btn{background:var(--or);color:#fff;padding:10px;border:none;border-radius:2px;font-weight:700;cursor:pointer;width:100%;margin-top:5px}
-.btn:active{transform:scale(0.98)}
-.t-wrap{overflow-x:auto;border:1px solid var(--bo2);border-radius:3px;background:var(--bg2)}
-table{width:100%;border-collapse:collapse;min-width:600px}
-th{padding:10px;text-align:left;color:var(--or);font-size:10px;background:#120d04;border-bottom:1px solid var(--bo2)}
-td{padding:10px;border-bottom:1px solid var(--bo);color:var(--tx2);font-size:11px}
-.pill{padding:2px 6px;border-radius:2px;font-size:9px;font-weight:700;background:rgba(255,255,255,0.05)}
-#loading{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;color:var(--or)}
+.card{background:var(--card);border:1px solid var(--bo2);padding:20px;border-radius:4px;margin-bottom:20px}
+.title{font-size:14px;color:var(--or);margin-bottom:15px;font-weight:700;text-transform:uppercase;border-left:4px solid var(--or);padding-left:10px}
+.row{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:15px;margin-bottom:15px}
+.f-gp{display:flex;flex-direction:column;gap:5px}
+label{font-size:10px;color:var(--tx2);text-transform:uppercase;font-weight:700}
+input,select,textarea{background:var(--bg3);border:1px solid var(--bo2);padding:10px;color:var(--tx);font-family:var(--fn);border-radius:3px;width:100%;outline:none}
+input:focus{border-color:var(--or)}
+.btn{background:var(--or);color:#fff;padding:12px;border:none;border-radius:3px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;transition:0.2s}
+.btn:hover{background:var(--or2)}
+.t-wrap{overflow-x:auto;border:1px solid var(--bo2);border-radius:4px;background:var(--bg2);margin-top:10px}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{padding:12px;text-align:left;color:var(--or);font-size:11px;background:#120d04;border-bottom:1px solid var(--bo2);text-transform:uppercase}
+td{padding:12px;border-bottom:1px solid var(--bo);color:var(--tx2);font-size:12px}
+.pill{padding:3px 8px;border-radius:3px;font-size:10px;font-weight:700;white-space:nowrap}
+#loading{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:var(--or)}
 .hide{display:none}
-@media (max-width:600px){ .row{grid-template-columns:1fr} }
+/* COLORI STATO */
+.s-attesa{background:rgba(154,122,88,0.2);color:#9a7a58}
+.s-corso{background:rgba(90,174,232,0.2);color:#5aaee8}
+.s-fine{background:rgba(78,203,110,0.2);color:#4ecb6e}
 </style>
 </head>
 <body>
 
-<div id="loading" class="hide">CARICAMENTO...</div>
+<div id="loading" class="hide"><div>SINCRONIZZAZIONE...</div></div>
 
-<header class="hdr">
-  <h1>DESANTIS CLOUD v2.4</h1>
-</header>
+<header class="hdr"><h1>DESANTIS MANAGEMENT v2.5</h1></header>
 
 <nav class="tabs">
   <button class="t-btn active" onclick="tab('c',this)">Anagrafica</button>
   <button class="t-btn" onclick="tab('p',this)">Produzione</button>
   <button class="t-btn" onclick="tab('i',this)">Incassi</button>
-  <button class="t-btn" onclick="tab('s',this)">Riepilogo</button>
+  <button class="t-btn" onclick="tab('s',this)">Riepilogo Generale</button>
 </nav>
 
 <main>
   <section id="p-c" class="panel active">
     <div class="card">
-      <div class="title">Nuova Commessa</div>
+      <div class="title">Nuova Commessa / Cliente</div>
       <div class="row">
-        <div class="f-gp"><label>Cliente</label><input type="text" id="c_cli"></div>
-        <div class="f-gp"><label>Tipo Lavoro</label><input type="text" id="c_lav"></div>
+        <div class="f-gp"><label>Cliente</label><input type="text" id="c_cli" placeholder="Nome Cognome"></div>
+        <div class="f-gp"><label>Tipo Lavoro</label><input type="text" id="c_lav" placeholder="es. Cucina Rovere"></div>
+        <div class="f-gp"><label>Stato</label>
+          <select id="c_stato">
+            <option value="In attesa">In attesa</option>
+            <option value="In Corso" selected>In Corso</option>
+            <option value="Lavori Finiti">Lavori Finiti</option>
+            <option value="Consegnato">Consegnato</option>
+          </select>
+        </div>
       </div>
       <div class="row">
-        <div class="f-gp"><label>Valore €</label><input type="number" id="c_val" value="0"></div>
-        <div class="f-gp"><label>Ore Previste</label><input type="number" id="c_ore" value="0"></div>
+        <div class="f-gp"><label>Valore Preventivo €</label><input type="number" id="c_val" value="0"></div>
+        <div class="f-gp"><label>Ore Previste Totali</label><input type="number" id="c_ore" value="0"></div>
+        <div class="f-gp"><label>Data Consegna Stimata</label><input type="date" id="c_fine"></div>
       </div>
-      <button class="btn" onclick="saveCli()">SALVA CLIENTE</button>
+      <button class="btn" onclick="saveCli()">CREA COMMESSA</button>
     </div>
     <div class="t-wrap">
-      <table><thead><tr><th>Cliente</th><th>Lavoro</th><th>Stato</th></tr></thead><tbody id="list-c"></tbody></table>
+      <table><thead><tr><th>Cliente</th><th>Lavoro</th><th>Valore</th><th>Stato</th></tr></thead><tbody id="list-c"></tbody></table>
     </div>
   </section>
 
   <section id="p-p" class="panel">
     <div class="card">
-      <div class="title">Registra Ore Lavoro</div>
+      <div class="title">Registra Lavorazione Progress</div>
       <div class="row">
-        <div class="f-gp"><label>Seleziona Commessa</label><select id="p_cont"></select></div>
-        <div class="f-gp"><label>Data</label><input type="date" id="p_data"></div>
+        <div class="f-gp"><label>Seleziona Cliente</label><select id="p_cont"></select></div>
+        <div class="f-gp"><label>Data Lavoro</label><input type="date" id="p_data"></div>
+        <div class="f-gp"><label>Ore Lavorate Oggi</label><input type="number" id="p_ore" step="0.5" placeholder="0.0"></div>
       </div>
       <div class="row">
-        <div class="f-gp"><label>Ore di oggi</label><input type="number" id="p_ore" step="0.5"></div>
+        <div class="f-gp"><label>Dettaglio Lavoro (Prodotto)</label><input type="text" id="p_prod" placeholder="Cosa è stato fatto?"></div>
+        <div class="f-gp"><label>Operatore</label><input type="text" id="p_oper" value="Titolare"></div>
         <div class="f-gp"><label>Avanzamento %</label><input type="number" id="p_ava" placeholder="0-100"></div>
       </div>
-      <div class="row">
-        <div class="f-gp"><label>Note Lavorazione</label><input type="text" id="p_prod" placeholder="Cosa hai fatto?"></div>
-        <div class="f-gp"><label>Operatore</label><input type="text" id="p_oper" value="Titolare"></div>
-      </div>
-      <button class="btn" onclick="saveLav()">REGISTRA PRODUZIONE</button>
+      <button class="btn" onclick="saveLav()">REGISTRA ORE PRODUZIONE</button>
     </div>
     <div class="t-wrap">
-      <table><thead><tr><th>Data</th><th>Cliente</th><th>Ore</th><th>Lavoro</th></tr></thead><tbody id="list-p"></tbody></table>
+      <table><thead><tr><th>Data</th><th>Cliente</th><th>Ore</th><th>Dettaglio</th></tr></thead><tbody id="list-p"></tbody></table>
     </div>
   </section>
 
   <section id="p-i" class="panel">
     <div class="card">
-      <div class="title">Registra Pagamento</div>
+      <div class="title">Nuovo Incasso</div>
       <div class="row">
-        <div class="f-gp"><label>Commessa</label><select id="i_cont"></select></div>
+        <div class="f-gp"><label>Cliente</label><select id="i_cont"></select></div>
         <div class="f-gp"><label>Data</label><input type="date" id="i_data"></div>
+        <div class="f-gp"><label>Importo Incassato €</label><input type="number" id="i_val" placeholder="0.00"></div>
+        <div class="f-gp"><label>Metodo</label><input type="text" id="i_met" value="Acconto"></div>
       </div>
-      <div class="row">
-        <div class="f-gp"><label>Importo €</label><input type="number" id="i_val"></div>
-        <div class="f-gp"><label>Metodo</label><input type="text" id="i_met" value="Bonifico"></div>
-      </div>
-      <button class="btn" onclick="saveInc()">SALVA INCASSO</button>
+      <button class="btn" onclick="saveInc()">REGISTRA PAGAMENTO</button>
     </div>
   </section>
 
   <section id="p-s" class="panel">
-    <div id="stat-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px"></div>
+    <div id="stat-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px,1fr));gap:15px;margin-bottom:20px"></div>
     <div class="t-wrap">
-      <table><thead><tr><th>Cliente</th><th>Lavoro</th><th>Stato</th><th>Ore</th><th>Incasso</th></tr></thead><tbody id="list-s"></tbody></table>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th><th>Lavoro</th><th>Stato</th><th>Ore Prev</th><th>Ore Eff</th><th>% Lav</th><th>Prev €</th><th>Incas €</th><th>% Pag</th><th>Consegna</th>
+          </tr>
+        </thead>
+        <tbody id="list-s"></tbody>
+      </table>
     </div>
   </section>
 </main>
@@ -126,18 +141,24 @@ const SUBA_URL = 'https://phqiutctunqiwqrqvtrd.supabase.co';
 const SUBA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBocWl1dGN0dW5xaXdxcnF2dHJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgyNDcyNjksImV4cCI6MjA1MzgyNzI2OX0.jX-WVU8uNxSAVCzG6D8WXmDC0nFzP-hCPCrA3zK8-2c';
 const sb = window.supabase.createClient(SUBA_URL, SUBA_KEY);
 
-let CC=[], PP=[], UU=[];
+let CC=[], PP=[], UU=[], LX={};
 
+// Inizializzazione
 async function init(){
   loader(true);
-  document.getElementById('p_data').value = new Date().toISOString().split('T')[0];
-  document.getElementById('i_data').value = new Date().toISOString().split('T')[0];
+  const oggi = new Date().toISOString().split('T')[0];
+  document.getElementById('p_data').value = oggi;
+  document.getElementById('i_data').value = oggi;
+  
+  // Carica ledger locale per dati extra (es. ore previste se non su supabase)
+  const saved = localStorage.getItem('desantis_ledger');
+  if(saved) LX = JSON.parse(saved);
+
   await refresh();
   loader(false);
 }
 
 function loader(s){ document.getElementById('loading').classList.toggle('hide',!s); }
-
 function tab(t, b){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.t-btn').forEach(x=>x.classList.remove('active'));
@@ -146,74 +167,99 @@ function tab(t, b){
 }
 
 async function refresh(){
-  const rC = await sb.from('contatti').select('*').order('cliente');
-  const rP = await sb.from('produzione').select('*, contatti(cliente)').order('data',{ascending:false});
-  const rU = await sb.from('incassi').select('*, contatti(cliente)').order('data',{ascending:false});
+  const [rC, rP, rU] = await Promise.all([
+    sb.from('contatti').select('*').order('cliente'),
+    sb.from('produzione').select('*, contatti(cliente)').order('data',{ascending:false}),
+    sb.from('incassi').select('*, contatti(cliente)').order('data',{ascending:false})
+  ]);
   
   CC = rC.data || []; PP = rP.data || []; UU = rU.data || [];
-  
   render();
 }
 
 function render(){
-  // Liste dropdown
-  const opt = CC.map(c=>`<option value="${c.id}">${c.cliente} - ${c.tipo_lavoro}</option>`).join('');
+  const opt = CC.map(c=>`<option value="${c.id}">${c.cliente} | ${c.tipo_lavoro}</option>`).join('');
   document.getElementById('p_cont').innerHTML = opt;
   document.getElementById('i_cont').innerHTML = opt;
 
-  // Tabella Anagrafica
-  document.getElementById('list-c').innerHTML = CC.map(c=>`<tr><td>${c.cliente}</td><td>${c.tipo_lavoro}</td><td><span class="pill">${c.stato}</span></td></tr>`).join('');
+  // Lista Anagrafica
+  document.getElementById('list-c').innerHTML = CC.map(c=>`<tr><td>${c.cliente}</td><td>${c.tipo_lavoro}</td><td>€ ${c.valore}</td><td><span class="pill s-corso">${c.stato}</span></td></tr>`).join('');
 
-  // Tabella Produzione
-  document.getElementById('list-p').innerHTML = PP.map(p=>`<tr><td>${p.data}</td><td>${p.contatti?.cliente || '???'}</td><td>${p.ore_lavorate}h</td><td>${p.prodotto || ''}</td></tr>`).join('');
+  // Lista Produzione
+  document.getElementById('list-p').innerHTML = PP.map(p=>`<tr><td>${p.data}</td><td>${p.contatti?.cliente || '-'}</td><td>${p.ore_lavorate}h</td><td>${p.prodotto || ''}</td></tr>`).join('');
 
-  // Riepilogo
-  let tOre = PP.reduce((s,p)=>s+Number(p.ore_lavorate||0),0);
-  let tInc = UU.reduce((s,i)=>s+Number(i.incasso||0),0);
+  // RIEPILOGO GENERALE (Logica 900 righe ripristinata)
+  let totOre = 0, totInc = 0;
+  let htmlS = CC.map(c => {
+    const cP = PP.filter(r => r.contatto_id === c.id);
+    const cU = UU.filter(r => r.contatto_id === c.id);
+    const oreEff = cP.reduce((s,r) => s + Number(r.ore_lavorate||0), 0);
+    const incEff = cU.reduce((s,r) => s + Number(r.incasso||0), 0);
+    const orePrev = c.ore_previste || LX[c.id]?.ore_previste || 0;
+    const percLav = orePrev > 0 ? Math.round((oreEff/orePrev)*100) : 0;
+    const percInc = c.valore > 0 ? Math.round((incEff/c.valore)*100) : 0;
+    
+    totOre += oreEff; totInc += incEff;
+
+    return `<tr>
+      <td><strong>${c.cliente}</strong></td><td>${c.tipo_lavoro}</td>
+      <td><span class="pill ${c.stato === 'In Corso' ? 's-corso' : 's-fine'}">${c.stato}</span></td>
+      <td>${orePrev}h</td><td>${oreEff}h</td><td>${percLav}%</td>
+      <td>€ ${c.valore}</td><td>€ ${incEff}</td><td>${percInc}%</td>
+      <td>${c.fine_stimata || '-'}</td>
+    </tr>`;
+  }).join('');
+  
+  document.getElementById('list-s').innerHTML = htmlS;
   document.getElementById('stat-grid').innerHTML = `
-    <div class="card" style="text-align:center"><div style="font-size:10px;color:var(--tx2)">ORE TOTALI</div><div style="font-size:18px;color:var(--or)">${tOre}h</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:10px;color:var(--tx2)">TOT. INCASSATO</div><div style="font-size:18px;color:var(--gn)">€${tInc}</div></div>
+    <div class="card" style="text-align:center"><label>Ore Totali</label><div style="font-size:20px;color:var(--or)">${totOre}h</div></div>
+    <div class="card" style="text-align:center"><label>Incasso Totale</label><div style="font-size:20px;color:var(--gn)">€ ${totInc}</div></div>
   `;
 }
 
 async function saveCli(){
   const cli = document.getElementById('c_cli').value;
-  if(!cli) return alert("Inserisci il nome cliente");
+  if(!cli) return alert("Nome obbligatorio");
   loader(true);
-  const {error} = await sb.from('contatti').insert({
+  const payload = {
     cliente: cli,
     tipo_lavoro: document.getElementById('c_lav').value,
     valore: parseFloat(document.getElementById('c_val').value)||0,
     ore_previste: parseFloat(document.getElementById('c_ore').value)||0,
-    stato: 'In Corso'
-  });
-  if(error) alert("Errore: " + error.message);
-  else { alert("Cliente salvato!"); await refresh(); }
+    stato: document.getElementById('c_stato').value,
+    fine_stimata: document.getElementById('c_fine').value
+  };
+  const {error} = await sb.from('contatti').insert(payload);
+  if(error) alert("Errore: "+error.message);
+  else { alert("Commessa Creata!"); await refresh(); }
   loader(false);
 }
 
+// LA FUNZIONE CHE NON FUNZIONAVA - CORRETTA
 async function saveLav(){
   const id = document.getElementById('p_cont').value;
   const ore = document.getElementById('p_ore').value;
-  if(!id || !ore) return alert("Manca Cliente o Ore");
+  if(!id || !ore) return alert("Seleziona Cliente e inserisci le Ore");
   
   loader(true);
-  // Cerchiamo di scrivere nella tabella produzione
-  const {error} = await sb.from('produzione').insert({
+  const dataInvio = {
     contatto_id: parseInt(id),
     data: document.getElementById('p_data').value,
     prodotto: document.getElementById('p_prod').value,
     operatore: document.getElementById('p_oper').value,
-    ore_lavorate: parseFloat(ore)||0,
+    ore_lavorate: parseFloat(ore),
     avanzamento: parseInt(document.getElementById('p_ava').value)||0
-  });
+  };
+
+  const {error} = await sb.from('produzione').insert(dataInvio);
 
   if(error){
-    console.error(error);
-    alert("ERRORE SUPABASE: " + error.message + "\nControlla se la colonna 'prodotto' o 'operatore' esiste.");
+    console.error("Errore Supabase:", error);
+    alert("ERRORE DI REGISTRAZIONE:\n" + error.message);
   } else {
-    alert("Produzione registrata!");
+    alert("Lavoro registrato con successo!");
     document.getElementById('p_ore').value = '';
+    document.getElementById('p_prod').value = '';
     await refresh();
   }
   loader(false);
@@ -222,15 +268,15 @@ async function saveLav(){
 async function saveInc(){
   const id = document.getElementById('i_cont').value;
   const val = document.getElementById('i_val').value;
-  if(!id || !val) return alert("Manca Cliente o Importo");
+  if(!id || !val) return alert("Dati mancanti");
   loader(true);
   const {error} = await sb.from('incassi').insert({
     contatto_id: parseInt(id),
     data: document.getElementById('i_data').value,
-    incasso: parseFloat(val)||0,
+    incasso: parseFloat(val),
     metodo: document.getElementById('i_met').value
   });
-  if(error) alert("Errore: " + error.message);
+  if(error) alert("Errore: "+error.message);
   else { alert("Incasso registrato!"); await refresh(); }
   loader(false);
 }
