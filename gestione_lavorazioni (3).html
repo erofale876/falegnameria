@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Falegnameria Desantis – Gestione Commesse</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#17110a;--bg2:#1e1508;--bg3:#261c0b;--card:#1b1308;
+  --bo:#3d2912;--bo2:#4e3518;
+  --or:#e8692a;--or2:#ff7c3a;
+  --tx:#d4c4a8;--tx2:#9a7a58;--tx3:#5a3820;
+  --gn:#4ecb6e;--bl:#5aaee8;--rd:#d85040;
+  --fn:'Share Tech Mono',monospace;
+}
+body{background:var(--bg);color:var(--tx);font-family:var(--fn);font-size:13px;min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  padding:13px 18px;border-bottom:2px solid var(--or);
+  background:linear-gradient(180deg,#0a0600 0%,var(--bg) 100%)}
+.hdr-t{font-size:18px;font-weight:700;color:var(--or);letter-spacing:.1em;text-transform:uppercase}
+.hdr-s{font-size:9px;color:var(--tx2);margin-top:3px;letter-spacing:.05em}
+.hdr-r{display:flex;gap:7px;flex-wrap:wrap}
+
+/* ── BTN ── */
+.btn{padding:8px 13px;font-family:var(--fn);font-size:11px;font-weight:700;text-transform:uppercase;
+  border-radius:3px;cursor:pointer;border:1px solid;white-space:nowrap;transition:filter .12s}
+.btn:hover{filter:brightness(1.15)}
+.b-or{background:var(--or);color:#fff;border-color:var(--or)}
+.b-dk{background:var(--bg3);color:var(--tx2);border-color:var(--bo2)}
+.b-bl{background:#0b1d30;color:var(--bl);border-color:#1a3850}
+.b-rd{background:#2a0d0a;color:var(--rd);border-color:#501a18}
+.b-gn{background:#0b2618;color:var(--gn);border-color:#1a5030}
+.b-sm{padding:4px 9px;font-size:10px}
+
+/* ── MAIN ── */
+main{max-width:1160px;margin:0 auto;padding:16px 13px}
+
+/* ── GRID CARD ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.cc{background:var(--card);border:1px solid var(--bo2);border-radius:4px;padding:13px;transition:border-color .18s}
+.cc:hover{border-color:rgba(232,105,42,.55)}
+.cc-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.cc-nm{font-size:13px;font-weight:700;color:var(--tx)}
+.cc-sub{font-size:9px;color:var(--tx3);margin-bottom:9px}
+.bw{margin:4px 0}
+.bl2{display:flex;justify-content:space-between;font-size:8px;text-transform:uppercase;color:var(--tx3);margin-bottom:2px}
+.pb{height:4px;background:var(--bo2);border-radius:2px}
+.pf-or{height:100%;border-radius:2px;background:var(--or)}
+.pf-gn{height:100%;border-radius:2px;background:var(--gn)}
+.cnums{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:9px}
+.cn{background:var(--bg3);border-radius:3px;padding:5px 8px}
+.cn-l{font-size:8px;text-transform:uppercase;color:var(--tx3)}
+.cn-v{font-size:11px;font-weight:700;color:var(--tx);margin-top:1px}
+.cc-act{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px;padding-top:8px;border-top:1px solid var(--bo)}
+
+/* ── PILL ── */
+.pi{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:2px;text-transform:uppercase}
+.p-c{background:rgba(60,120,200,.2);color:#6ab0f0}
+.p-p{background:rgba(200,160,40,.2);color:#e0c060}
+.p-l{background:rgba(232,105,42,.2);color:var(--or)}
+.p-d{background:rgba(60,200,80,.2);color:#60d080}
+.p-f{background:rgba(140,80,200,.2);color:#b080e8}
+
+/* ── OVERLAY ── */
+.ov{position:fixed;inset:0;background:rgba(6,4,1,.94);z-index:100;overflow-y:auto;display:none}
+.ov.on{display:block}
+.ov-in{max-width:800px;margin:0 auto;padding:16px 13px 50px}
+.ov-hd{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:9px;
+  margin-bottom:16px;padding-bottom:11px;border-bottom:2px solid var(--or)}
+.ov-t{font-size:16px;font-weight:700;color:var(--or)}
+.ov-sub{font-size:9px;color:var(--tx2);margin-top:3px}
+.ov-ar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* ── SEZIONI COLLASSABILI ── */
+.sc{background:var(--card);border:1px solid var(--bo2);border-radius:4px;margin-bottom:8px;overflow:hidden}
+.sc-hd{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 13px;cursor:pointer;user-select:none;transition:background .12s}
+.sc-hd:hover{background:rgba(255,255,255,.025)}
+.sc-tit{font-size:11px;font-weight:700;color:var(--or);text-transform:uppercase}
+.ar{color:var(--tx3);font-size:10px;transition:transform .18s}
+.ar.u{transform:rotate(180deg)}
+.sc-bd{padding:12px 13px;border-top:1px solid var(--bo2);display:none}
+.sc-bd.on{display:block}
+
+/* ── FORM ── */
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:9px}
+.fg1{display:grid;grid-template-columns:1fr;gap:9px;margin-bottom:9px}
+.fgp{display:flex;flex-direction:column;gap:3px}
+.fl{font-size:8px;font-weight:700;text-transform:uppercase;color:var(--tx2)}
+.fi,.fs{width:100%;background:var(--bg3);border:1px solid var(--bo2);border-radius:3px;
+  padding:7px 9px;color:var(--tx);font-family:var(--fn);font-size:12px}
+.fi:focus,.fs:focus{outline:none;border-color:var(--or);background:#2e1c0a}
+.fi[readonly]{opacity:.5;cursor:default}
+.hint{font-size:8px;color:var(--tx3);margin-top:2px}
+
+/* ── INFO BOX ── */
+.ib2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.ib3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.ib{background:var(--bg3);border-radius:3px;padding:6px 9px}
+.ib-l{font-size:8px;text-transform:uppercase;color:var(--tx3);margin-bottom:2px}
+.ib-v{font-size:12px;font-weight:700;color:var(--tx)}
+.div{border:none;border-top:1px solid var(--bo2);margin:10px 0}
+
+/* ── TABLE ── */
+.tw{border:1px solid var(--bo2);border-radius:3px;overflow-x:auto;margin-top:9px}
+.tw table{width:100%;border-collapse:collapse;min-width:400px}
+.tw thead tr{background:#100b05}
+.tw th{padding:6px 8px;font-size:8px;font-weight:700;text-transform:uppercase;color:var(--or);text-align:left;white-space:nowrap}
+.tw td{padding:6px 8px;border-top:1px solid var(--bo);color:var(--tx2);font-size:11px}
+.tw-tot{background:#100b05;padding:7px 10px;font-size:11px;font-weight:700;color:var(--or);border-top:1px solid var(--bo2)}
+
+/* ── LOADING & NOTIF ── */
+.ld{position:fixed;inset:0;background:rgba(8,5,1,.9);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;z-index:9999}
+.ld.off{display:none}
+.sp{width:28px;height:28px;border:3px solid var(--bo2);border-top-color:var(--or);border-radius:50%;animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+#notif{position:fixed;bottom:13px;right:13px;background:var(--card);border:1px solid var(--or);
+  border-radius:3px;padding:8px 14px;font-size:11px;color:var(--or);opacity:0;transition:opacity .2s;
+  z-index:9999;pointer-events:none}
+#notif.on{opacity:1}
+
+/* ── EMPTY ── */
+.emp{text-align:center;padding:60px 20px;color:var(--tx3);font-size:12px}
+
+/* ── MOBILE ── */
+@media(max-width:560px){
+  .fg2,.fg3,.ib2,.ib3{grid-template-columns:1fr}
+  .hdr{flex-direction:column;align-items:flex-start}
+  .ov-hd{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="ld" id="ld">
+  <div class="sp"></div>
+  <div style="font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em">Caricamento...</div>
+</div>
+<div id="notif"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="hdr-t">■ Falegnameria Desantis</div>
+    <div class="hdr-s">Gestione Commesse · Registro Professionale</div>
+  </div>
+  <div class="hdr-r">
+    <button class="btn b-dk" onclick="apriRiep()">≡ Riepilogo Generale</button>
+    <button class="btn b-or" onclick="apriNuova()">+ Nuova Commessa</button>
+  </div>
+</div>
+
+<main>
+  <div id="gw"></div>
+  <div id="emp" class="emp" style="display:none">
+    Nessuna commessa presente.<br>Clicca <strong>+ Nuova Commessa</strong> per iniziare.
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: DETTAGLIO SCHEDA COMMESSA
+══════════════════════════════════════════ -->
+<div class="ov" id="ov-det">
+<div class="ov-in">
+  <div class="ov-hd">
+    <div>
+      <div class="ov-t" id="det-tit">—</div>
+      <div class="ov-sub" id="det-sub">—</div>
+    </div>
+    <div class="ov-ar">
+      <button class="btn b-gn b-sm" onclick="stampaScheda()">⎙ Stampa Scheda</button>
+      <button class="btn b-or b-sm" onclick="apriModComm()">✎ Modifica</button>
+      <button class="btn b-dk b-sm" onclick="chiudiDet()">✕ Chiudi</button>
+    </div>
+  </div>
+
+  <!-- SEZIONE 1: ANAGRAFICA -->
+  <div class="sc" id="s1">
+    <div class="sc-hd" onclick="togS('s1')">
+      <div class="sc-tit">① Anagrafica Commessa</div>
+      <div class="ar u" id="ar-s1">▼</div>
+    </div>
+    <div class="sc-bd on" id="bd-s1">
+      <div id="anag-view"></div>
+    </div>
+  </div>
+
+  <!-- SEZIONE 2: LAVORAZIONI -->
+  <div class="sc" id="s2">
+    <div class="sc-hd" onclick="togS('s2')">
+      <div class="sc-tit">② Lavorazioni in Progress</div>
+      <div class="ar u" id="ar-s2">▼</div>
+    </div>
+    <div class="sc-bd on" id="bd-s2">
+      <div id="lav-riep"></div>
+      <hr class="div">
+      <div style="font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;margin-bottom:8px" id="lav-form-tit">+ Aggiungi lavorazione</div>
+      <input type="hidden" id="leid">
+      <div class="fg2">
+        <div class="fgp"><label class="fl">Data</label><input type="date" id="ld2" class="fi"></div>
+        <div class="fgp"><label class="fl">Operatore</label>
+          <select id="lop" class="fs">
+            <option value="">-- Seleziona --</option>
+            <option>Titolare Mirco</option>
+            <option>Operaio Nazzareno</option>
+            <option>Operaio B</option>
+            <option>Lavorazione esterna con fattura</option>
+            <option>Altro</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fgp"><label class="fl">Tipo lavorazione</label>
+          <select id="ltip" class="fs">
+            <option value="">-- Seleziona --</option>
+            <option>Misurazione / Sopralluogo</option>
+            <option>Progettazione / Disegno</option>
+            <option>Taglio / Segatura</option>
+            <option>Piallatura</option>
+            <option>Fresatura / Intaglio</option>
+            <option>Incollatura / Giunzione</option>
+            <option>Assemblaggio / Montaggio</option>
+            <option>Levigatura</option>
+            <option>Verniciatura / Laccatura</option>
+            <option>Trattamento / Finitura legno</option>
+            <option>Posa in opera</option>
+            <option>Ferramenta / Accessori</option>
+            <option>Restauro / Ripristino</option>
+            <option>Imballaggio / Consegna</option>
+            <option>Altro</option>
+          </select>
+        </div>
+        <div class="fgp"><label class="fl">Ore lavorate oggi</label>
+          <input type="number" id="lore" class="fi" step="0.5" min="0.5" placeholder="Es. 4">
+        </div>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="btn b-or b-sm" onclick="saveLav()">Salva Lavorazione</button>
+        <button class="btn b-dk b-sm" id="lav-ann" onclick="resetLav()" style="display:none">Annulla</button>
+      </div>
+      <div class="tw" id="lav-tw" style="display:none">
+        <table>
+          <thead><tr><th>Data</th><th>Lavorazione</th><th>Operatore</th><th>Ore Oggi</th><th>Ore Cumulate</th><th></th></tr></thead>
+          <tbody id="lav-tb"></tbody>
+        </table>
+        <div class="tw-tot">Totale ore: <span id="ltot">0</span>h &nbsp;·&nbsp; Completamento: <span id="lperc">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEZIONE 3: INCASSI -->
+  <div class="sc" id="s3">
+    <div class="sc-hd" onclick="togS('s3')">
+      <div class="sc-tit">③ Incassi</div>
+      <div class="ar u" id="ar-s3">▼</div>
+    </div>
+    <div class="sc-bd on" id="bd-s3">
+      <div id="inc-riep"></div>
+      <hr class="div">
+      <div style="font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;margin-bottom:8px" id="inc-form-tit">+ Registra incasso</div>
+      <input type="hidden" id="ieid">
+      <div class="fg3">
+        <div class="fgp"><label class="fl">Data incasso</label><input type="date" id="idat" class="fi"></div>
+        <div class="fgp"><label class="fl">Importo (€)</label><input type="number" id="iimp" class="fi" step="0.01" min="0" placeholder="0.00"></div>
+        <div class="fgp"><label class="fl">Note</label><input type="text" id="inot" class="fi" placeholder="Es. Acconto, saldo..."></div>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="btn b-or b-sm" onclick="saveInc()">Salva Incasso</button>
+        <button class="btn b-dk b-sm" id="inc-ann" onclick="resetInc()" style="display:none">Annulla</button>
+      </div>
+      <div class="tw" id="inc-tw" style="display:none">
+        <table>
+          <thead><tr><th>Data</th><th>Importo</th><th>Note</th><th></th></tr></thead>
+          <tbody id="inc-tb"></tbody>
+        </table>
+        <div class="tw-tot">Totale incassato: € <span id="itot">0,00</span> &nbsp;·&nbsp; <span id="iperc">—</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: NUOVA / MODIFICA COMMESSA
+══════════════════════════════════════════ -->
+<div class="ov" id="ov-form">
+<div class="ov-in">
+  <div class="ov-hd">
+    <div class="ov-t" id="form-tit">+ Nuova Commessa</div>
+    <button class="btn b-dk b-sm" onclick="chiudiForm()">✕ Chiudi</button>
+  </div>
+  <div class="sc"><div class="sc-bd on" style="display:block">
+    <input type="hidden" id="neid">
+    <div class="fg2">
+      <div class="fgp"><label class="fl">Data inserimento</label><input type="date" id="ndat" class="fi"></div>
+      <div class="fgp"><label class="fl">Nome committente *</label><input type="text" id="ncli" class="fi" placeholder="Es. Rossi Mario"></div>
+    </div>
+    <div class="fg2">
+      <div class="fgp"><label class="fl">Tipo contatto</label>
+        <select id="ntcon" class="fs">
+          <option value="">-- Seleziona --</option>
+          <option>Privato</option><option>Azienda / Ditta</option>
+          <option>Condominio</option><option>Ente pubblico</option><option>Altro</option>
+        </select>
+      </div>
+      <div class="fgp"><label class="fl">Tipo commessa *</label>
+        <select id="ntlav" class="fs">
+          <option value="">-- Seleziona --</option>
+          <option>Porte interne</option><option>Portoncino ingresso</option>
+          <option>Finestre / Infissi</option><option>Persiane / Scuri</option>
+          <option>Scale in legno</option><option>Armadi su misura</option>
+          <option>Cucina su misura</option><option>Mobili bagno</option>
+          <option>Librerie / Scaffali</option><option>Tavoli / Sedie</option>
+          <option>Mobili su misura</option><option>Restauro mobili</option>
+          <option>Serramenti esterni</option><option>Riparazioni varie</option>
+          <option>Altro</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg3">
+      <div class="fgp"><label class="fl">Data inizio lavorazione</label><input type="date" id="nini" class="fi"></div>
+      <div class="fgp"><label class="fl">Data fine stimata</label><input type="date" id="nfst" class="fi"></div>
+      <div class="fgp"><label class="fl">Data fine confermata</label><input type="date" id="nfco" class="fi"></div>
+    </div>
+    <div class="fg2">
+      <div class="fgp">
+        <label class="fl">Incasso previsto (€)</label>
+        <input type="number" id="nval" class="fi" step="0.01" placeholder="0.00">
+      </div>
+      <div class="fgp">
+        <label class="fl">Ore previste totali</label>
+        <input type="number" id="norep" class="fi" step="0.5" placeholder="Es. 40">
+        <div class="hint">Serve per calcolare % completamento lavorazioni</div>
+      </div>
+    </div>
+    <div class="fg1">
+      <div class="fgp"><label class="fl">Stato commessa</label>
+        <select id="nstat" class="fs">
+          <option>Contatto</option><option>Preventivo</option>
+          <option>Lavori in corso</option><option>Consegnato</option><option>Fatturato</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn b-or" onclick="saveNuova()">Salva Commessa</button>
+      <button class="btn b-dk" onclick="chiudiForm()">Annulla</button>
+    </div>
+  </div></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: RIEPILOGO GENERALE
+══════════════════════════════════════════ -->
+<div class="ov" id="ov-riep">
+<div class="ov-in">
+  <div class="ov-hd">
+    <div class="ov-t">■ Riepilogo Generale Commesse</div>
+    <div class="ov-ar">
+      <button class="btn b-gn b-sm" onclick="stampaRiep()">⎙ Stampa Riepilogo</button>
+      <button class="btn b-dk b-sm" onclick="chiudiRiep()">✕ Chiudi</button>
+    </div>
+  </div>
+  <div id="riep-body"></div>
+</div>
+</div>
+
+<!-- ══ SCRIPT ══════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SU = 'https://uyzfhilwtikrjqgylxwg.supabase.co';
+const SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5emZoaWx3dGlrcmpxZ3lseHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTYwNDcsImV4cCI6MjA5MDg5MjA0N30._tmP4XpZnK9Wmc3AkkZd52hM_xrmMHIK2EjGTB3xYfQ';
+const sb = createClient(SU, SK);
+
+// ── STATO GLOBALE ────────────────────────────────────────
+let CID = null;   // id commessa aperta
+let CC=[], PP=[], UU=[];
+
+// ── UTILS ────────────────────────────────────────────────
+const fmt   = n => Number(n||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+const oggi  = () => new Date().toISOString().slice(0,10);
+const perc  = (v,t) => t>0 ? Math.min(Math.round(v/t*100),100) : 0;
+const pcls  = s => ({'Contatto':'p-c','Preventivo':'p-p','Lavori in corso':'p-l','Consegnato':'p-d','Fatturato':'p-f'}[s]||'p-c');
+
+// LocalStorage per campi extra (dates, ore previste, tipo contatto)
+// Così non serve modificare Supabase
+const LK = id => 'fd_'+id;
+const gx  = id => { try{ return JSON.parse(localStorage.getItem(LK(id))||'{}'); }catch(e){ return {}; } };
+const sx  = (id,d) => localStorage.setItem(LK(id), JSON.stringify({...gx(id),...d}));
+
+function ok(m){ const n=document.getElementById('notif'); n.textContent='✓ '+m; n.classList.add('on'); setTimeout(()=>n.classList.remove('on'),2500); }
+function ld(on){ document.getElementById('ld').classList.toggle('off',!on); }
+function scroll0(){ document.getElementById('ov-det').scrollTop=0; document.getElementById('ov-form').scrollTop=0; }
+
+// ── INIT ─────────────────────────────────────────────────
+async function init(){
+  oggi(); // warm up
+  ['ld2','idat','ndat'].forEach(id=>{ const e=document.getElementById(id); if(e)e.value=oggi(); });
+  await reload();
+  ld(false);
+}
+
+async function reload(){
+  const [r1,r2,r3] = await Promise.all([
+    sb.from('contatti').select('*').order('data',{ascending:false}),
+    sb.from('produzione').select('*').order('data',{ascending:true}).order('id',{ascending:true}),
+    sb.from('uscite').select('*').order('data',{ascending:true}).order('id',{ascending:true}),
+  ]);
+  CC = r1.data||[]; PP = r2.data||[]; UU = r3.data||[];
+  renderGrid();
+}
+
+// ── GRIGLIA ─────────────────────────────────────────────
+function renderGrid(){
+  const gw  = document.getElementById('gw');
+  const emp = document.getElementById('emp');
+  if(!CC.length){ gw.innerHTML=''; emp.style.display='block'; return; }
+  emp.style.display='none';
+  gw.innerHTML = '<div class="grid">'+CC.map(c=>{
+    const x  = gx(c.id);
+    const cP = PP.filter(r=>r.contatto_id===c.id);
+    const cU = UU.filter(r=>r.contatto_id===c.id);
+    const ore = cP.reduce((s,r)=>s+Number(r.ore_lavorate),0);
+    const inc = cU.reduce((s,r)=>s+Number(r.incasso),0);
+    const aL  = perc(ore, Number(x.ore_previste||0));
+    const aI  = perc(inc, Number(c.valore||0));
+    return `<div class="cc">
+      <div class="cc-hd">
+        <div class="cc-nm">${c.cliente}</div>
+        <span class="pi ${pcls(c.stato)}">${c.stato}</span>
+      </div>
+      <div class="cc-sub">${c.tipo_lavoro}${x.tipo_contatto?' · '+x.tipo_contatto:''}</div>
+      <div class="bw">
+        <div class="bl2"><span>Lavorazioni</span><span>${x.ore_previste>0?aL+'%':'—'}</span></div>
+        <div class="pb"><div class="pf-or" style="width:${aL}%"></div></div>
+      </div>
+      <div class="bw">
+        <div class="bl2"><span>Incassi</span><span>${c.valore>0?aI+'%':'—'}</span></div>
+        <div class="pb"><div class="pf-gn" style="width:${aI}%"></div></div>
+      </div>
+      <div class="cnums">
+        <div class="cn"><div class="cn-l">Ore lavorate</div><div class="cn-v">${ore.toFixed(1)}h</div></div>
+        <div class="cn"><div class="cn-l">Incassato</div><div class="cn-v" style="color:var(--gn)">€ ${fmt(inc)}</div></div>
+        <div class="cn"><div class="cn-l">Preventivo</div><div class="cn-v">€ ${fmt(c.valore)}</div></div>
+        <div class="cn"><div class="cn-l">Lavorazioni</div><div class="cn-v">${cP.length} voci</div></div>
+      </div>
+      <div class="cc-act">
+        <button class="btn b-bl b-sm" onclick="apreDet(${c.id})">Apri Scheda</button>
+        <button class="btn b-rd b-sm" onclick="delComm(${c.id})">✕ Elimina</button>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+// ── TOGGLE SEZIONI ────────────────────────────────────────
+window.togS = id=>{
+  document.getElementById('bd-'+id).classList.toggle('on');
+  document.getElementById('ar-'+id).classList.toggle('u');
+};
+
+// ══════════════════════════════════════════
+//  DETTAGLIO SCHEDA
+// ══════════════════════════════════════════
+window.apreDet = id=>{
+  CID=id;
+  const c = CC.find(r=>r.id===id);
+  document.getElementById('det-tit').textContent = c.cliente.toUpperCase();
+  document.getElementById('det-sub').textContent = c.tipo_lavoro+' · '+c.stato;
+  disegnaAnag(); disegnaLav(); disegnaInc();
+  document.getElementById('ov-det').classList.add('on');
+  document.body.style.overflow='hidden';
+  scroll0();
+};
+
+window.chiudiDet = ()=>{
+  document.getElementById('ov-det').classList.remove('on');
+  document.body.style.overflow='';
+  CID=null;
+};
+
+// ── ANAGRAFICA ────────────────────────────────────────────
+function disegnaAnag(){
+  const c = CC.find(r=>r.id===CID);
+  const x = gx(CID);
+  document.getElementById('anag-view').innerHTML = `
+    <div class="ib3">
+      <div class="ib"><div class="ib-l">Data inserimento</div><div class="ib-v">${c.data}</div></div>
+      <div class="ib"><div class="ib-l">Tipo contatto</div><div class="ib-v">${x.tipo_contatto||'—'}</div></div>
+      <div class="ib"><div class="ib-l">Stato</div><div class="ib-v"><span class="pi ${pcls(c.stato)}">${c.stato}</span></div></div>
+    </div>
+    <div class="ib3">
+      <div class="ib"><div class="ib-l">Data inizio</div><div class="ib-v">${x.data_inizio||'—'}</div></div>
+      <div class="ib"><div class="ib-l">Fine stimata</div><div class="ib-v">${x.data_fine_st||'—'}</div></div>
+      <div class="ib"><div class="ib-l">Fine confermata</div><div class="ib-v">${x.data_fine_co||'—'}</div></div>
+    </div>
+    <div class="ib2">
+      <div class="ib"><div class="ib-l">Incasso previsto</div><div class="ib-v" style="color:var(--or)">€ ${fmt(c.valore)}</div></div>
+      <div class="ib"><div class="ib-l">Ore previste totali</div><div class="ib-v">${Number(x.ore_previste||0)>0?x.ore_previste+'h':'—'}</div></div>
+    </div>`;
+}
+
+// ── FORM MODIFICA commessa da dentro la scheda ─────────────
+window.apriModComm = ()=>{
+  apriMod(CID);
+};
+
+// ── LAVORAZIONI ───────────────────────────────────────────
+function disegnaLav(){
+  const cP  = PP.filter(r=>r.contatto_id===CID);
+  const x   = gx(CID);
+  const oreP= Number(x.ore_previste||0);
+  let cum=0;
+  const rows = cP.map(r=>{ cum+=Number(r.ore_lavorate); return {...r,_cum:cum}; });
+  const aL   = perc(cum,oreP);
+
+  document.getElementById('lav-riep').innerHTML = `
+    <div class="ib3">
+      <div class="ib"><div class="ib-l">Ore totali lavorate</div><div class="ib-v" style="color:var(--or)">${cum.toFixed(1)}h</div></div>
+      <div class="ib"><div class="ib-l">Ore previste</div><div class="ib-v">${oreP>0?oreP+'h':'Non inserite'}</div></div>
+      <div class="ib"><div class="ib-l">% Completamento</div><div class="ib-v">${oreP>0?aL+'%':'—'}</div></div>
+    </div>
+    ${oreP>0?`<div class="bl2"><span>Avanzamento lavorazioni</span><span>${aL}%</span></div>
+    <div class="pb" style="height:6px"><div class="pf-or" style="width:${aL}%"></div></div>`:''}`;
+
+  const tw = document.getElementById('lav-tw');
+  if(rows.length){
+    tw.style.display='';
+    document.getElementById('lav-tb').innerHTML = rows.map(r=>`<tr>
+      <td>${r.data}</td><td>${r.prodotto}</td><td>${r.operatore}</td>
+      <td style="color:var(--or)">${Number(r.ore_lavorate).toFixed(1)}h</td>
+      <td>${r._cum.toFixed(1)}h</td>
+      <td><div style="display:flex;gap:3px">
+        <button class="btn b-bl b-sm" onclick="editLav(${r.id})" style="padding:2px 7px;font-size:9px">✎</button>
+        <button class="btn b-rd b-sm" onclick="delLav(${r.id})" style="padding:2px 7px;font-size:9px">✕</button>
+      </div></td></tr>`).join('');
+    document.getElementById('ltot').textContent  = cum.toFixed(1);
+    document.getElementById('lperc').textContent = oreP>0 ? aL+'%' : '(inserire ore previste per calcolare %)';
+  } else { tw.style.display='none'; }
+}
+
+window.saveLav = async()=>{
+  const eid  = document.getElementById('leid').value;
+  const dat  = document.getElementById('ld2').value;
+  const tip  = document.getElementById('ltip').value;
+  const op   = document.getElementById('lop').value;
+  const ore  = parseFloat(document.getElementById('lore').value)||0;
+  if(!tip||!op||ore<=0){ alert('Compilare: tipo lavorazione, operatore e ore (>0)'); return; }
+  ld(true);
+  const x   = gx(CID);
+  const oreP= Number(x.ore_previste||0);
+  const altri= PP.filter(r=>r.contatto_id===CID && (!eid||r.id!==parseInt(eid)));
+  const prec = altri.reduce((s,r)=>s+Number(r.ore_lavorate),0);
+  const avanz= perc(prec+ore,oreP);
+  const pay  = {data:dat,contatto_id:CID,prodotto:tip,operatore:op,ore_lavorate:ore,avanzamento:avanz,note:''};
+  if(eid){ await sb.from('produzione').update(pay).eq('id',parseInt(eid)); ok('Lavorazione aggiornata'); }
+  else   { await sb.from('produzione').insert(pay); ok('Lavorazione salvata'); }
+  resetLav(); await reload(); disegnaLav(); ld(false);
+};
+
+window.editLav = id=>{
+  const r = PP.find(x=>x.id===id);
+  document.getElementById('leid').value  = r.id;
+  document.getElementById('ld2').value   = r.data;
+  document.getElementById('ltip').value  = r.prodotto;
+  document.getElementById('lop').value   = r.operatore;
+  document.getElementById('lore').value  = r.ore_lavorate;
+  document.getElementById('lav-form-tit').textContent='✎ Modifica lavorazione';
+  document.getElementById('lav-ann').style.display='';
+  document.getElementById('bd-s2').scrollIntoView({behavior:'smooth',block:'end'});
+};
+
+window.resetLav = ()=>{
+  document.getElementById('leid').value='';
+  document.getElementById('ld2').value=oggi();
+  document.getElementById('ltip').value='';
+  document.getElementById('lop').value='';
+  document.getElementById('lore').value='';
+  document.getElementById('lav-form-tit').textContent='+ Aggiungi lavorazione';
+  document.getElementById('lav-ann').style.display='none';
+};
+
+window.delLav = async id=>{
+  if(!confirm('Eliminare questa lavorazione?')) return;
+  ld(true);
+  await sb.from('produzione').delete().eq('id',id);
+  await reload(); disegnaLav(); ld(false); ok('Eliminata');
+};
+
+// ── INCASSI ───────────────────────────────────────────────
+function disegnaInc(){
+  const c  = CC.find(r=>r.id===CID);
+  const cU = UU.filter(r=>r.contatto_id===CID);
+  const tot= cU.reduce((s,r)=>s+Number(r.incasso),0);
+  const aI = perc(tot,Number(c.valore||0));
+
+  document.getElementById('inc-riep').innerHTML = `
+    <div class="ib3">
+      <div class="ib"><div class="ib-l">Incasso previsto</div><div class="ib-v">€ ${fmt(c.valore)}</div></div>
+      <div class="ib"><div class="ib-l">Totale incassato</div><div class="ib-v" style="color:var(--gn)">€ ${fmt(tot)}</div></div>
+      <div class="ib"><div class="ib-l">% Incassata</div><div class="ib-v">${c.valore>0?aI+'%':'—'}</div></div>
+    </div>
+    ${c.valore>0?`<div class="bl2"><span>Avanzamento incassi</span><span>${aI}%</span></div>
+    <div class="pb" style="height:6px"><div class="pf-gn" style="width:${aI}%"></div></div>`:''}`;
+
+  const tw = document.getElementById('inc-tw');
+  if(cU.length){
+    tw.style.display='';
+    document.getElementById('inc-tb').innerHTML = cU.map(r=>`<tr>
+      <td>${r.data}</td>
+      <td style="color:var(--gn)">€ ${fmt(r.incasso)}</td>
+      <td>${r.data_consegna||'—'}</td>
+      <td><div style="display:flex;gap:3px">
+        <button class="btn b-bl b-sm" onclick="editInc(${r.id})" style="padding:2px 7px;font-size:9px">✎</button>
+        <button class="btn b-rd b-sm" onclick="delInc(${r.id})" style="padding:2px 7px;font-size:9px">✕</button>
+      </div></td></tr>`).join('');
+    document.getElementById('itot').textContent  = fmt(tot);
+    document.getElementById('iperc').textContent = c.valore>0 ? aI+'% sul totale previsto' : '—';
+  } else { tw.style.display='none'; }
+}
+
+window.saveInc = async()=>{
+  const eid = document.getElementById('ieid').value;
+  const dat = document.getElementById('idat').value;
+  const imp = parseFloat(document.getElementById('iimp').value)||0;
+  const not = document.getElementById('inot').value||null;
+  if(imp<=0){ alert('Inserire importo maggiore di zero'); return; }
+  ld(true);
+  const pay = {data:dat,contatto_id:CID,incasso:imp,finito:false,data_consegna:not};
+  if(eid){ await sb.from('uscite').update(pay).eq('id',parseInt(eid)); ok('Incasso aggiornato'); }
+  else   { await sb.from('uscite').insert(pay); ok('Incasso registrato'); }
+  resetInc(); await reload(); disegnaInc(); ld(false);
+};
+
+window.editInc = id=>{
+  const r = UU.find(x=>x.id===id);
+  document.getElementById('ieid').value = r.id;
+  document.getElementById('idat').value = r.data;
+  document.getElementById('iimp').value = r.incasso;
+  document.getElementById('inot').value = r.data_consegna||'';
+  document.getElementById('inc-form-tit').textContent='✎ Modifica incasso';
+  document.getElementById('inc-ann').style.display='';
+  document.getElementById('bd-s3').scrollIntoView({behavior:'smooth',block:'end'});
+};
+
+window.resetInc = ()=>{
+  document.getElementById('ieid').value='';
+  document.getElementById('idat').value=oggi();
+  document.getElementById('iimp').value='';
+  document.getElementById('inot').value='';
+  document.getElementById('inc-form-tit').textContent='+ Registra incasso';
+  document.getElementById('inc-ann').style.display='none';
+};
+
+window.delInc = async id=>{
+  if(!confirm('Eliminare questo incasso?')) return;
+  ld(true);
+  await sb.from('uscite').delete().eq('id',id);
+  await reload(); disegnaInc(); ld(false); ok('Eliminato');
+};
+
+// ── NUOVA / MODIFICA COMMESSA ─────────────────────────────
+window.apriNuova = ()=>{
+  document.getElementById('neid').value='';
+  document.getElementById('form-tit').textContent='+ Nuova Commessa';
+  ['ncli','ntcon','ntlav','nini','nfst','nfco','nval','norep'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ndat').value=oggi();
+  document.getElementById('nstat').value='Contatto';
+  document.getElementById('ov-form').classList.add('on');
+  document.body.style.overflow='hidden';
+  scroll0();
+};
+
+window.apriMod = id=>{
+  const c=CC.find(r=>r.id===id), x=gx(id);
+  document.getElementById('neid').value   = id;
+  document.getElementById('form-tit').textContent='✎ Modifica Commessa';
+  document.getElementById('ndat').value   = c.data;
+  document.getElementById('ncli').value   = c.cliente;
+  document.getElementById('ntcon').value  = x.tipo_contatto||'';
+  document.getElementById('ntlav').value  = c.tipo_lavoro;
+  document.getElementById('nini').value   = x.data_inizio||'';
+  document.getElementById('nfst').value   = x.data_fine_st||'';
+  document.getElementById('nfco').value   = x.data_fine_co||'';
+  document.getElementById('nval').value   = c.valore||'';
+  document.getElementById('norep').value  = x.ore_previste||'';
+  document.getElementById('nstat').value  = c.stato;
+  document.getElementById('ov-form').classList.add('on');
+  document.body.style.overflow='hidden';
+  scroll0();
+};
+
+window.saveNuova = async()=>{
+  const eid  = document.getElementById('neid').value;
+  const cli  = document.getElementById('ncli').value.trim();
+  const tlav = document.getElementById('ntlav').value;
+  if(!cli||!tlav){ alert('Inserire nome committente e tipo commessa'); return; }
+  ld(true);
+  const pay={
+    data:document.getElementById('ndat').value,
+    cliente:cli, tipo_lavoro:tlav,
+    valore:parseFloat(document.getElementById('nval').value)||0,
+    stato:document.getElementById('nstat').value,
+  };
+  let nid = eid ? parseInt(eid) : null;
+  if(eid){
+    await sb.from('contatti').update(pay).eq('id',nid);
+    ok('Commessa aggiornata');
+  } else {
+    const {data:ins} = await sb.from('contatti').insert(pay).select().single();
+    nid = ins.id;
+    ok('Commessa creata');
+  }
+  sx(nid,{
+    tipo_contatto: document.getElementById('ntcon').value,
+    data_inizio:   document.getElementById('nini').value,
+    data_fine_st:  document.getElementById('nfst').value,
+    data_fine_co:  document.getElementById('nfco').value,
+    ore_previste:  parseFloat(document.getElementById('norep').value)||0,
+  });
+  chiudiForm();
+  await reload();
+  // Se la scheda era aperta aggiorna i dati visualizzati
+  if(CID===nid){ disegnaAnag(); disegnaLav(); disegnaInc();
+    document.getElementById('ov-det').classList.add('on');
+    document.body.style.overflow='hidden'; }
+  ld(false);
+};
+
+window.chiudiForm = ()=>{ document.getElementById('ov-form').classList.remove('on'); document.body.style.overflow=''; };
+
+window.delComm = async id=>{
+  if(!confirm('Eliminare questa commessa e tutti i dati collegati?')) return;
+  ld(true);
+  await Promise.all([
+    sb.from('produzione').delete().eq('contatto_id',id),
+    sb.from('uscite').delete().eq('contatto_id',id),
+  ]);
+  await sb.from('contatti').delete().eq('id',id);
+  localStorage.removeItem(LK(id));
+  if(CID===id) chiudiDet();
+  await reload(); ld(false); ok('Commessa eliminata');
+};
+
+// ── RIEPILOGO ─────────────────────────────────────────────
+window.apriRiep = ()=>{
+  const totOre  = PP.reduce((s,r)=>s+Number(r.ore_lavorate),0);
+  const totInc  = UU.reduce((s,r)=>s+Number(r.incasso),0);
+  const totPrev = CC.reduce((s,c)=>s+Number(c.valore),0);
+  const nAttive = CC.filter(c=>c.stato==='Lavori in corso').length;
+  const nChiuse = CC.filter(c=>c.stato==='Fatturato'||c.stato==='Consegnato').length;
+
+  const righe = CC.map(c=>{
+    const x   = gx(c.id);
+    const cP  = PP.filter(r=>r.contatto_id===c.id);
+    const cU  = UU.filter(r=>r.contatto_id===c.id);
+    const ore = cP.reduce((s,r)=>s+Number(r.ore_lavorate),0);
+    const inc = cU.reduce((s,r)=>s+Number(r.incasso),0);
+    const oreP= Number(x.ore_previste||0);
+    const aL  = perc(ore,oreP);
+    const aI  = perc(inc,Number(c.valore||0));
+    return {c,x,ore,inc,oreP,aL,aI};
+  });
+
+  document.getElementById('riep-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:7px;margin-bottom:18px">
+      <div class="ib"><div class="ib-l">Commesse totali</div><div class="ib-v" style="font-size:17px">${CC.length}</div></div>
+      <div class="ib"><div class="ib-l">In lavorazione</div><div class="ib-v" style="color:var(--or)">${nAttive}</div></div>
+      <div class="ib"><div class="ib-l">Chiuse / Fatturate</div><div class="ib-v" style="color:var(--gn)">${nChiuse}</div></div>
+      <div class="ib"><div class="ib-l">Totale preventivi</div><div class="ib-v">€ ${fmt(totPrev)}</div></div>
+      <div class="ib"><div class="ib-l">Totale incassato</div><div class="ib-v" style="color:var(--gn)">€ ${fmt(totInc)}</div></div>
+      <div class="ib"><div class="ib-l">Ore totali lavorate</div><div class="ib-v">${totOre.toFixed(1)}h</div></div>
+    </div>
+    <div class="tw">
+    <table><thead><tr>
+      <th>Committente</th><th>Commessa</th><th>Stato</th>
+      <th>Ore Prev.</th><th>Ore Lav.</th><th>% Lav.</th>
+      <th>Preventivo</th><th>Incassato</th><th>% Inc.</th>
+      <th>Fine Stim.</th>
+    </tr></thead><tbody>
+    ${righe.map(({c,x,ore,inc,oreP,aL,aI})=>`<tr>
+      <td><strong style="color:var(--tx)">${c.cliente}</strong></td>
+      <td>${c.tipo_lavoro}</td>
+      <td><span class="pi ${pcls(c.stato)}">${c.stato}</span></td>
+      <td>${oreP>0?oreP+'h':'—'}</td>
+      <td style="color:var(--or)">${ore.toFixed(1)}h</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div class="pb" style="width:45px;height:4px"><div class="pf-or" style="width:${aL}%"></div></div>
+          <span>${oreP>0?aL+'%':'—'}</span>
+        </div>
+      </td>
+      <td>€ ${fmt(c.valore)}</td>
+      <td style="color:var(--gn)">€ ${fmt(inc)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div class="pb" style="width:45px;height:4px"><div class="pf-gn" style="width:${aI}%"></div></div>
+          <span>${c.valore>0?aI+'%':'—'}</span>
+        </div>
+      </td>
+      <td>${x.data_fine_st||'—'}</td>
+    </tr>`).join('')}
+    </tbody></table>
+    <div class="tw-tot">Preventivi: € ${fmt(totPrev)} &nbsp;·&nbsp; Incassato: € ${fmt(totInc)} &nbsp;·&nbsp; Ore totali: ${totOre.toFixed(1)}h</div>
+    </div>`;
+
+  document.getElementById('ov-riep').classList.add('on');
+  document.body.style.overflow='hidden';
+};
+
+window.chiudiRiep = ()=>{ document.getElementById('ov-riep').classList.remove('on'); document.body.style.overflow=''; };
+
+// ── STAMPE ────────────────────────────────────────────────
+const CSS_P = `
+body{font-family:monospace;padding:24px;color:#111;font-size:12px}
+h1{font-size:15px;margin-bottom:3px} h2{font-size:10px;font-weight:700;text-transform:uppercase;
+  margin:16px 0 6px;border-bottom:1px solid #ddd;padding-bottom:3px}
+.meta{color:#666;font-size:9px;margin-bottom:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.st{background:#f4f4f4;padding:6px 11px;border-radius:3px;min-width:95px}
+.sl{font-size:8px;text-transform:uppercase;color:#888}.sv{font-size:12px;font-weight:700;margin-top:1px}
+.pb{background:#e8e8e8;height:5px;border-radius:3px;margin:5px 0 2px}
+.po{background:#e8692a;height:100%;border-radius:3px}
+.pg{background:#3ab85a;height:100%;border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{background:#f0f0f0;padding:5px 7px;text-align:left;font-size:9px;text-transform:uppercase}
+td{padding:5px 7px;border-bottom:1px solid #ebebeb}
+.tot{background:#f8f8f8;padding:6px 8px;font-weight:700;font-size:11px}
+.pill{display:inline-block;padding:1px 6px;border-radius:2px;font-size:8px;font-weight:700}
+.btn-s{margin-top:18px;padding:7px 16px;background:#e8692a;color:#fff;border:none;border-radius:3px;font-size:11px;cursor:pointer}
+@media print{.btn-s{display:none}}`;
+
+window.stampaScheda = ()=>{
+  const c  = CC.find(r=>r.id===CID);
+  const x  = gx(CID);
+  const cP = PP.filter(r=>r.contatto_id===CID);
+  const cU = UU.filter(r=>r.contatto_id===CID);
+  const ore = cP.reduce((s,r)=>s+Number(r.ore_lavorate),0);
+  const inc = cU.reduce((s,r)=>s+Number(r.incasso),0);
+  const oreP= Number(x.ore_previste||0);
+  const aL  = perc(ore,oreP), aI=perc(inc,Number(c.valore||0));
+  let cum=0;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Scheda ${c.cliente}</title><style>${CSS_P}</style></head><body>
+  <h1>SCHEDA COMMESSA — ${c.cliente}</h1>
+  <div class="meta">${c.tipo_lavoro}${x.tipo_contatto?' · '+x.tipo_contatto:''} · Stato: ${c.stato} · Inserita: ${c.data}</div>
+
+  <h2>① Anagrafica</h2>
+  <div class="row">
+    <div class="st"><div class="sl">Inizio lavorazione</div><div class="sv">${x.data_inizio||'—'}</div></div>
+    <div class="st"><div class="sl">Fine stimata</div><div class="sv">${x.data_fine_st||'—'}</div></div>
+    <div class="st"><div class="sl">Fine confermata</div><div class="sv">${x.data_fine_co||'—'}</div></div>
+    <div class="st"><div class="sl">Incasso previsto</div><div class="sv">€ ${fmt(c.valore)}</div></div>
+    <div class="st"><div class="sl">Ore previste</div><div class="sv">${oreP>0?oreP+'h':'—'}</div></div>
+  </div>
+
+  <h2>② Lavorazioni — ${ore.toFixed(1)}h lavorate su ${oreP>0?oreP+'h':'n.d.'} — Completamento: ${oreP>0?aL+'%':'—'}</h2>
+  ${oreP>0?`<div class="pb"><div class="po" style="width:${aL}%"></div></div>`:''}
+  <table><thead><tr><th>Data</th><th>Lavorazione</th><th>Operatore</th><th>Ore oggi</th><th>Ore cumulate</th></tr></thead>
+  <tbody>${cP.map(r=>{ cum+=Number(r.ore_lavorate);
+    return `<tr><td>${r.data}</td><td>${r.prodotto}</td><td>${r.operatore}</td>
+      <td>${Number(r.ore_lavorate).toFixed(1)}h</td><td>${cum.toFixed(1)}h</td></tr>`; }).join('')}
+  </tbody></table>
+  <div class="tot">Totale ore lavorate: ${ore.toFixed(1)}h</div>
+
+  <h2>③ Incassi — Totale: € ${fmt(inc)}${c.valore>0?' su € '+fmt(c.valore)+' ('+aI+'%)':''}</h2>
+  ${c.valore>0?`<div class="pb"><div class="pg" style="width:${aI}%"></div></div>`:''}
+  <table><thead><tr><th>Data</th><th>Importo</th><th>Note</th></tr></thead>
+  <tbody>${cU.map(r=>`<tr><td>${r.data}</td><td>€ ${fmt(r.incasso)}</td><td>${r.data_consegna||'—'}</td></tr>`).join('')}
+  </tbody></table>
+  <div class="tot">Totale incassato: € ${fmt(inc)}</div>
+
+  <button class="btn-s" onclick="window.print()">⎙ Stampa / Salva PDF</button>
+  </body></html>`);
+  w.document.close();
+};
+
+window.stampaRiep = ()=>{
+  const totOre  = PP.reduce((s,r)=>s+Number(r.ore_lavorate),0);
+  const totInc  = UU.reduce((s,r)=>s+Number(r.incasso),0);
+  const totPrev = CC.reduce((s,c)=>s+Number(c.valore),0);
+  const PM={'Contatto':'background:#ddeeff;color:#1050a0','Preventivo':'background:#fff8cc;color:#806000',
+    'Lavori in corso':'background:#ffeecc;color:#c05000','Consegnato':'background:#ccf0dd;color:#1a6030',
+    'Fatturato':'background:#eeddf8;color:#6030a0'};
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Riepilogo Generale</title><style>${CSS_P}
+  thead th{background:#e8692a;color:#fff}tr:nth-child(even) td{background:#fbfbfb}
+  </style></head><body>
+  <h1>RIEPILOGO GENERALE — FALEGNAMERIA DESANTIS</h1>
+  <div class="meta">Generato il ${new Date().toLocaleDateString('it-IT')} · ${CC.length} commesse</div>
+  <div class="row">
+    <div class="st"><div class="sl">Commesse</div><div class="sv">${CC.length}</div></div>
+    <div class="st"><div class="sl">In lavorazione</div><div class="sv">${CC.filter(c=>c.stato==='Lavori in corso').length}</div></div>
+    <div class="st"><div class="sl">Tot. preventivi</div><div class="sv">€ ${fmt(totPrev)}</div></div>
+    <div class="st"><div class="sl">Tot. incassato</div><div class="sv">€ ${fmt(totInc)}</div></div>
+    <div class="st"><div class="sl">Ore totali</div><div class="sv">${totOre.toFixed(1)}h</div></div>
+  </div>
+  <table><thead><tr>
+    <th>Committente</th><th>Tipo commessa</th><th>Stato</th>
+    <th>Ore Prev.</th><th>Ore Lav.</th><th>% Lav.</th>
+    <th>Preventivo</th><th>Incassato</th><th>% Inc.</th>
+    <th>Fine Stim.</th>
+  </tr></thead><tbody>
+  ${CC.map(c=>{
+    const x=gx(c.id);
+    const cP=PP.filter(r=>r.contatto_id===c.id), cU=UU.filter(r=>r.contatto_id===c.id);
+    const ore=cP.reduce((s,r)=>s+Number(r.ore_lavorate),0);
+    const inc=cU.reduce((s,r)=>s+Number(r.incasso),0);
+    const oreP=Number(x.ore_previste||0);
+    const aL=perc(ore,oreP), aI=perc(inc,Number(c.valore||0));
+    return `<tr>
+      <td><strong>${c.cliente}</strong></td><td>${c.tipo_lavoro}</td>
+      <td><span class="pill" style="${PM[c.stato]||''}">${c.stato}</span></td>
+      <td>${oreP>0?oreP+'h':'—'}</td>
+      <td>${ore.toFixed(1)}h</td><td>${oreP>0?aL+'%':'—'}</td>
+      <td>€ ${fmt(c.valore)}</td><td>€ ${fmt(inc)}</td>
+      <td>${c.valore>0?aI+'%':'—'}</td>
+      <td>${x.data_fine_st||'—'}</td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>
+  <div class="tot">Preventivi: € ${fmt(totPrev)} · Incassato: € ${fmt(totInc)} · Ore totali: ${totOre.toFixed(1)}h</div>
+  <button class="btn-s" onclick="window.print()">⎙ Stampa / Salva PDF</button>
+  </body></html>`);
+  w.document.close();
+};
+
+init();
+</script>
+</body>
+</html>
