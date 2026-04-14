@@ -426,8 +426,8 @@ function renderGrid(){
   emp.style.display='none';
   gw.innerHTML = '<div class="grid">'+CC.map(c=>{
     const x  = gx(c.id);
-    const cP = PP.filter(r=>r.contatto_id===c.id);
-    const cU = UU.filter(r=>r.contatto_id===c.id);
+    const cP = PP.filter(r=>r.contatto_id==c.id);
+    const cU = UU.filter(r=>r.contatto_id==c.id);
     const ore = cP.reduce((s,r)=>s+Number(r.ore_lavorate),0);
     const inc = cU.reduce((s,r)=>s+Number(r.incasso),0);
     const aL  = perc(ore, Number(x.ore_previste||0));
@@ -470,8 +470,8 @@ window.togS = id=>{
 //  DETTAGLIO SCHEDA
 // ══════════════════════════════════════════
 window.apreDet = id=>{
-  CID=id;
-  const c = CC.find(r=>r.id===id);
+  CID = parseInt(id);  // sempre intero
+  const c = CC.find(r=>r.id===CID);
   document.getElementById('det-tit').textContent = c.cliente.toUpperCase();
   document.getElementById('det-sub').textContent = c.tipo_lavoro+' · '+c.stato;
   disegnaAnag(); disegnaLav(); disegnaInc();
@@ -488,7 +488,7 @@ window.chiudiDet = ()=>{
 
 // ── ANAGRAFICA ────────────────────────────────────────────
 function disegnaAnag(){
-  const c = CC.find(r=>r.id===CID);
+  const c = CC.find(r=>r.id==CID);
   const x = gx(CID);
   document.getElementById('anag-view').innerHTML = `
     <div class="ib3">
@@ -514,7 +514,8 @@ window.apriModComm = ()=>{
 
 // ── LAVORAZIONI ───────────────────────────────────────────
 function disegnaLav(){
-  const cP  = PP.filter(r=>r.contatto_id===CID);
+  // usa == per tollerare differenze int/string nel confronto con CID
+  const cP  = PP.filter(r=>r.contatto_id==CID);
   const x   = gx(CID);
   const oreP= Number(x.ore_previste||0);
   let cum=0;
@@ -554,14 +555,19 @@ window.saveLav = async()=>{
   const ore  = parseFloat(document.getElementById('lore').value)||0;
   if(!tip||!op||ore<=0){ alert('Compilare: tipo lavorazione, operatore e ore (>0)'); return; }
   ld(true);
-  const x   = gx(CID);
-  const oreP= Number(x.ore_previste||0);
-  const altri= PP.filter(r=>r.contatto_id===CID && (!eid||r.id!==parseInt(eid)));
-  const prec = altri.reduce((s,r)=>s+Number(r.ore_lavorate),0);
-  const avanz= perc(prec+ore,oreP);
-  const pay  = {data:dat,contatto_id:CID,prodotto:tip,operatore:op,ore_lavorate:ore,avanzamento:avanz,note:''};
-  if(eid){ await sb.from('produzione').update(pay).eq('id',parseInt(eid)); ok('Lavorazione aggiornata'); }
-  else   { await sb.from('produzione').insert(pay); ok('Lavorazione salvata'); }
+  const cid  = parseInt(CID);
+  // avanzamento calcolato al volo — non salvato nel DB per evitare problemi di colonna
+  const pay  = {data:dat, contatto_id:cid, prodotto:tip, operatore:op, ore_lavorate:ore, note:''};
+  let err;
+  if(eid){
+    const res = await sb.from('produzione').update(pay).eq('id',parseInt(eid));
+    err = res.error;
+  } else {
+    const res = await sb.from('produzione').insert(pay);
+    err = res.error;
+  }
+  if(err){ ld(false); alert('ERRORE SALVATAGGIO LAVORAZIONE:\n'+err.message); return; }
+  ok(eid?'Lavorazione aggiornata':'Lavorazione salvata');
   resetLav(); await reload(); disegnaLav(); ld(false);
 };
 
@@ -590,14 +596,15 @@ window.resetLav = ()=>{
 window.delLav = async id=>{
   if(!confirm('Eliminare questa lavorazione?')) return;
   ld(true);
-  await sb.from('produzione').delete().eq('id',id);
-  await reload(); disegnaLav(); ld(false); ok('Eliminata');
+  const res = await sb.from('produzione').delete().eq('id',id);
+  if(res.error){ ld(false); alert('Errore eliminazione: '+res.error.message); return; }
+  await reload(); disegnaLav(); renderGrid(); ld(false); ok('Eliminata');
 };
 
 // ── INCASSI ───────────────────────────────────────────────
 function disegnaInc(){
-  const c  = CC.find(r=>r.id===CID);
-  const cU = UU.filter(r=>r.contatto_id===CID);
+  const c  = CC.find(r=>r.id==CID);
+  const cU = UU.filter(r=>r.contatto_id==CID);
   const tot= cU.reduce((s,r)=>s+Number(r.incasso),0);
   const aI = perc(tot,Number(c.valore||0));
 
@@ -633,9 +640,18 @@ window.saveInc = async()=>{
   const not = document.getElementById('inot').value||null;
   if(imp<=0){ alert('Inserire importo maggiore di zero'); return; }
   ld(true);
-  const pay = {data:dat,contatto_id:CID,incasso:imp,finito:false,data_consegna:not};
-  if(eid){ await sb.from('uscite').update(pay).eq('id',parseInt(eid)); ok('Incasso aggiornato'); }
-  else   { await sb.from('uscite').insert(pay); ok('Incasso registrato'); }
+  const cid = parseInt(CID);
+  const pay = {data:dat, contatto_id:cid, incasso:imp, finito:false, data_consegna:not};
+  let err;
+  if(eid){
+    const res = await sb.from('uscite').update(pay).eq('id',parseInt(eid));
+    err = res.error;
+  } else {
+    const res = await sb.from('uscite').insert(pay);
+    err = res.error;
+  }
+  if(err){ ld(false); alert('ERRORE SALVATAGGIO INCASSO:\n'+err.message); return; }
+  ok(eid?'Incasso aggiornato':'Incasso registrato');
   resetInc(); await reload(); disegnaInc(); ld(false);
 };
 
@@ -662,8 +678,9 @@ window.resetInc = ()=>{
 window.delInc = async id=>{
   if(!confirm('Eliminare questo incasso?')) return;
   ld(true);
-  await sb.from('uscite').delete().eq('id',id);
-  await reload(); disegnaInc(); ld(false); ok('Eliminato');
+  const res = await sb.from('uscite').delete().eq('id',id);
+  if(res.error){ ld(false); alert('Errore eliminazione: '+res.error.message); return; }
+  await reload(); disegnaInc(); renderGrid(); ld(false); ok('Eliminato');
 };
 
 // ── NUOVA / MODIFICA COMMESSA ─────────────────────────────
@@ -711,11 +728,13 @@ window.saveNuova = async()=>{
   };
   let nid = eid ? parseInt(eid) : null;
   if(eid){
-    await sb.from('contatti').update(pay).eq('id',nid);
+    const res = await sb.from('contatti').update(pay).eq('id',nid);
+    if(res.error){ ld(false); alert('ERRORE AGGIORNAMENTO:\n'+res.error.message); return; }
     ok('Commessa aggiornata');
   } else {
-    const {data:ins} = await sb.from('contatti').insert(pay).select().single();
-    nid = ins.id;
+    const res = await sb.from('contatti').insert(pay).select().single();
+    if(res.error){ ld(false); alert('ERRORE INSERIMENTO:\n'+res.error.message); return; }
+    nid = res.data.id;
     ok('Commessa creata');
   }
   sx(nid,{
@@ -727,7 +746,6 @@ window.saveNuova = async()=>{
   });
   chiudiForm();
   await reload();
-  // Se la scheda era aperta aggiorna i dati visualizzati
   if(CID===nid){ disegnaAnag(); disegnaLav(); disegnaInc();
     document.getElementById('ov-det').classList.add('on');
     document.body.style.overflow='hidden'; }
