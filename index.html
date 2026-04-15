@@ -691,6 +691,7 @@ window.apriNuova = ()=>{
   ['ncli','ntcon','ntlav','nini','nfst','nfco','nval','norep'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('ndat').value=oggi();
   document.getElementById('nstat').value='Contatto';
+  ['s1','s2','s3'].forEach(s=>{const el=document.getElementById(s);if(el&&!el.classList.contains('on'))el.classList.add('on');});
   document.getElementById('ov-form').classList.add('on');
   document.body.style.overflow='hidden';
   scroll0();
