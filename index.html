@@ -535,7 +535,7 @@ function disegnaLav(){
   if(rows.length){
     tw.style.display='';
     document.getElementById('lav-tb').innerHTML = rows.map(r=>`<tr>
-      <td>${r.data}</td><td>${r.prodotto}</td><td>${r.operatore}</td>
+      <td>${r.data}</td><td>${r.note}</td><td>${r.operatore}</td>
       <td style="color:var(--or)">${Number(r.ore_lavorate).toFixed(1)}h</td>
       <td>${r._cum.toFixed(1)}h</td>
       <td><div style="display:flex;gap:3px">
@@ -557,7 +557,8 @@ window.saveLav = async()=>{
   ld(true);
   const cid  = parseInt(CID);
   // avanzamento calcolato al volo — non salvato nel DB per evitare problemi di colonna
-  const pay  = {data:dat, contatto_id:cid, prodotto:tip, operatore:op, ore_lavorate:ore, note:''};
+  // 'prodotto' non esiste nel DB → salviamo il tipo lavorazione nella colonna 'note'
+  const pay  = {data:dat, contatto_id:cid, operatore:op, ore_lavorate:ore, note:tip};
   let err;
   if(eid){
     const res = await sb.from('produzione').update(pay).eq('id',parseInt(eid));
@@ -575,7 +576,7 @@ window.editLav = id=>{
   const r = PP.find(x=>x.id===id);
   document.getElementById('leid').value  = r.id;
   document.getElementById('ld2').value   = r.data;
-  document.getElementById('ltip').value  = r.prodotto;
+  document.getElementById('ltip').value  = r.note;
   document.getElementById('lop').value   = r.operatore;
   document.getElementById('lore').value  = r.ore_lavorate;
   document.getElementById('lav-form-tit').textContent='✎ Modifica lavorazione';
@@ -884,7 +885,7 @@ window.stampaScheda = ()=>{
   ${oreP>0?`<div class="pb"><div class="po" style="width:${aL}%"></div></div>`:''}
   <table><thead><tr><th>Data</th><th>Lavorazione</th><th>Operatore</th><th>Ore oggi</th><th>Ore cumulate</th></tr></thead>
   <tbody>${cP.map(r=>{ cum+=Number(r.ore_lavorate);
-    return `<tr><td>${r.data}</td><td>${r.prodotto}</td><td>${r.operatore}</td>
+    return `<tr><td>${r.data}</td><td>${r.note}</td><td>${r.operatore}</td>
       <td>${Number(r.ore_lavorate).toFixed(1)}h</td><td>${cum.toFixed(1)}h</td></tr>`; }).join('')}
   </tbody></table>
   <div class="tot">Totale ore lavorate: ${ore.toFixed(1)}h</div>
